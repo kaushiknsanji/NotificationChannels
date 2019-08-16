@@ -75,6 +75,7 @@ class NotificationHelper extends ContextWrapper {
         followersChannel.setLightColor(Color.GREEN);
         followersChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         followersChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 500, 200, 500});
+        followersChannel.setShowBadge(false);
 
         // Submit the notification channel object to the notification manager
         getNotificationManager().createNotificationChannel(followersChannel);
@@ -96,6 +97,7 @@ class NotificationHelper extends ContextWrapper {
         dmChannel.setLightColor(Color.BLUE);
         dmChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         dmChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 500, 200, 500});
+        dmChannel.setShowBadge(true);
 
         // Submit the notification channel object to the notification manager
         getNotificationManager().createNotificationChannel(dmChannel);
