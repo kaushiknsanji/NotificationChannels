@@ -112,10 +112,15 @@ public class MainActivity extends Activity {
     /**
      * Send intent to load system Notification Settings UI for a particular channel.
      *
-     * @param channel Name of channel to configure
+     * @param channelId Unique Channel Id of the Notification Channel to display
      */
-    private void goToNotificationChannelSettings(String channel) {
-        // Skeleton method to be completed later
+    private void goToNotificationChannelSettings(String channelId) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Intent notificationSettingsIntent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+            notificationSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            notificationSettingsIntent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
+            startActivity(notificationSettingsIntent);
+        }
     }
 
     /**
@@ -145,7 +150,7 @@ public class MainActivity extends Activity {
                     sendNotification(NOTIFICATION_UNFOLLOW);
                     break;
                 case R.id.follower_channel_settings_button:
-                    goToNotificationChannelSettings("");
+                    goToNotificationChannelSettings(NotificationHelper.FOLLOWERS_CHANNEL);
                     break;
                 case R.id.friend_dm_button:
                     sendNotification(NOTIFICATION_DM_FRIEND);
@@ -154,7 +159,7 @@ public class MainActivity extends Activity {
                     sendNotification(NOTIFICATION_DM_COWORKER);
                     break;
                 case R.id.dm_channel_settings_button:
-                    goToNotificationChannelSettings("");
+                    goToNotificationChannelSettings(NotificationHelper.DIRECT_MESSAGE_CHANNEL);
                     break;
                 case R.id.go_to_settings_button:
                     goToNotificationSettings();
