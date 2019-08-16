@@ -16,6 +16,8 @@
 
 package com.example.android.notificationchannels;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,6 +27,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 
 import java.util.Random;
 
@@ -32,7 +36,10 @@ import java.util.Random;
  * Helper class to manage notification channels, and create notifications.
  */
 class NotificationHelper extends ContextWrapper {
+    // Notification Channel ID for Followers Notifications
     public static final String FOLLOWERS_CHANNEL = "follower";
+    // Notification Channel ID for Direct Messages Notifications
+    public static final String DIRECT_MESSAGE_CHANNEL = "direct_message";
     private NotificationManager mNotificationManager;
 
     /**
@@ -43,6 +50,20 @@ class NotificationHelper extends ContextWrapper {
     public NotificationHelper(Context context) {
         super(context);
 
+        // Registering Notification channels for devices running on
+        // Android version which is at least Oreo
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            addFollowersChannel();
+            addDirectMessagesChannel();
+        }
+
+    }
+
+    /**
+     * Registers a Notification Channel for "Followers" Notifications
+     */
+    @TargetApi(Build.VERSION_CODES.O)
+    private void addFollowersChannel() {
         // Create the channel object with the unique ID FOLLOWERS_CHANNEL
         NotificationChannel followersChannel =
                 new NotificationChannel(
@@ -53,10 +74,31 @@ class NotificationHelper extends ContextWrapper {
         // Configure the channel's initial settings
         followersChannel.setLightColor(Color.GREEN);
         followersChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        followersChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 500, 200, 500});
 
         // Submit the notification channel object to the notification manager
         getNotificationManager().createNotificationChannel(followersChannel);
+    }
 
+    /**
+     * Registers a Notification Channel for "Direct Messages" Notifications
+     */
+    @TargetApi(Build.VERSION_CODES.O)
+    private void addDirectMessagesChannel() {
+        // Create the channel object with the unique ID DIRECT_MESSAGE_CHANNEL
+        NotificationChannel dmChannel =
+                new NotificationChannel(
+                        DIRECT_MESSAGE_CHANNEL,
+                        getString(R.string.notification_channel_direct_message),
+                        NotificationManager.IMPORTANCE_HIGH);
+
+        // Configure the channel's initial settings
+        dmChannel.setLightColor(Color.BLUE);
+        dmChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        dmChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 500, 200, 500});
+
+        // Submit the notification channel object to the notification manager
+        getNotificationManager().createNotificationChannel(dmChannel);
     }
 
     /**
@@ -69,12 +111,22 @@ class NotificationHelper extends ContextWrapper {
      * @param body  the body text for the notification
      * @return A Notification.Builder configured with the selected channel and details
      */
-    public Notification.Builder getNotificationFollower(String title, String body) {
-        return new Notification.Builder(getApplicationContext())
+    @SuppressLint("ObsoleteSdkInt")
+    public NotificationCompat.Builder getNotificationFollower(String title, String body) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), FOLLOWERS_CHANNEL)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(getSmallIcon())
                 .setAutoCancel(true);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+                && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Sets the Notification Priority which is the equivalent of Notification Importance
+            // for devices running on Android version less than Oreo
+            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        }
+
+        return builder;
     }
 
     /**
@@ -87,12 +139,22 @@ class NotificationHelper extends ContextWrapper {
      * @param body  Message for notification.
      * @return A Notification.Builder configured with the selected channel and details
      */
-    public Notification.Builder getNotificationDM(String title, String body) {
-        return new Notification.Builder(getApplicationContext())
+    @SuppressLint("ObsoleteSdkInt")
+    public NotificationCompat.Builder getNotificationDM(String title, String body) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), DIRECT_MESSAGE_CHANNEL)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(getSmallIcon())
                 .setAutoCancel(true);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+                && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Sets the Notification Priority which is the equivalent of Notification Importance
+            // for devices running on Android version less than Oreo
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+
+        return builder;
     }
 
     /**
@@ -121,7 +183,7 @@ class NotificationHelper extends ContextWrapper {
      * @param id           The ID of the notification
      * @param notification The notification object
      */
-    public void notify(int id, Notification.Builder notification) {
+    public void notify(int id, NotificationCompat.Builder notification) {
         getNotificationManager().notify(id, notification.build());
     }
 

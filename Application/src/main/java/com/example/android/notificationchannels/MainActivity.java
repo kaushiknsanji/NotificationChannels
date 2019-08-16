@@ -17,10 +17,10 @@
 package com.example.android.notificationchannels;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
      * @param id The ID of the notification to create
      */
     private void sendNotification(int id) {
-        Notification.Builder notificationBuilder = null;
+        NotificationCompat.Builder notificationBuilder = null;
         switch (id) {
             case NOTIFICATION_FOLLOW:
                 notificationBuilder =
@@ -102,9 +102,11 @@ public class MainActivity extends Activity {
      * Send Intent to load system Notification Settings for this app.
      */
     private void goToNotificationSettings() {
-        Intent i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-        i.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-        startActivity(i);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Intent notificationSettingsIntent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            notificationSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            startActivity(notificationSettingsIntent);
+        }
     }
 
     /**
