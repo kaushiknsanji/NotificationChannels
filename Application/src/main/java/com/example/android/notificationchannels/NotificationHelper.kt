@@ -16,11 +16,17 @@
 
 package com.example.android.notificationchannels
 
-import android.app.*
+import android.annotation.TargetApi
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
+import android.support.v4.app.NotificationCompat
 import java.util.*
 
 /**
@@ -29,7 +35,10 @@ import java.util.*
 internal class NotificationHelper(context: Context) : ContextWrapper(context) {
 
     companion object {
-        val FOLLOWERS_CHANNEL = "follower"
+        // Notification Channel ID for Followers Notifications
+        const val FOLLOWERS_CHANNEL = "follower"
+        // Notification Channel ID for Direct Messages Notifications
+        const val DIRECT_MESSAGE_CHANNEL = "direct_message"
     }
 
     private val mNotificationManager: NotificationManager by lazy {
@@ -41,6 +50,20 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
      */
     init {
 
+        // Registering Notification channels for devices running on
+        // Android version which is at least Oreo
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            addFollowersChannel()
+            addDirectMessagesChannel()
+        }
+
+    }
+
+    /**
+     * Registers a Notification Channel for "Followers" Notifications
+     */
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun addFollowersChannel() {
         // Create the channel object with the unique ID FOLLOWERS_CHANNEL
         val followersChannel = NotificationChannel(
                 FOLLOWERS_CHANNEL,
@@ -49,11 +72,31 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
 
         // Configure the channel's initial settings
         followersChannel.lightColor = Color.GREEN
+        followersChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
         followersChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 500, 200, 500)
 
         // Submit the notification channel object to the notification manager
         mNotificationManager.createNotificationChannel(followersChannel)
+    }
 
+    /**
+     * Registers a Notification Channel for "Direct Messages" Notifications
+     */
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun addDirectMessagesChannel() {
+        // Create the channel object with the unique ID DIRECT_MESSAGE_CHANNEL
+        val dmChannel = NotificationChannel(
+                DIRECT_MESSAGE_CHANNEL,
+                getString(R.string.notification_channel_direct_message),
+                NotificationManager.IMPORTANCE_HIGH)
+
+        // Configure the channel's initial settings
+        dmChannel.lightColor = Color.BLUE
+        dmChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+        dmChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 500, 200, 500)
+
+        // Submit the notification channel object to the notification manager
+        mNotificationManager.createNotificationChannel(dmChannel)
     }
 
     /**
@@ -68,8 +111,8 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
      * *
      * @return A Notification.Builder configured with the selected channel and details
      */
-    fun getNotificationFollower(title: String, body: String): Notification.Builder {
-        return Notification.Builder(applicationContext)
+    fun getNotificationFollower(title: String, body: String): NotificationCompat.Builder {
+        return NotificationCompat.Builder(applicationContext)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(smallIcon)
@@ -89,8 +132,8 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
      * *
      * @return A Notification.Builder configured with the selected channel and details
      */
-    fun getNotificationDM(title: String, body: String): Notification.Builder {
-        return Notification.Builder(applicationContext)
+    fun getNotificationDM(title: String, body: String): NotificationCompat.Builder {
+        return NotificationCompat.Builder(applicationContext)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(smallIcon)
@@ -122,10 +165,9 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
      * Send a notification.
      *
      * @param id           The ID of the notification
-     * *
      * @param notification The notification object
      */
-    fun notify(id: Int, notification: Notification.Builder) {
+    fun notify(id: Int, notification: NotificationCompat.Builder) {
         mNotificationManager.notify(id, notification.build())
     }
 
@@ -140,12 +182,12 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
 
     /**
      * Get a random name string from resources to add personalization to the notification
-
+     *
      * @return A random name
      */
     val randomName: String
         get() {
-            var names = applicationContext.resources.getStringArray(R.array.names_array)
+            val names = applicationContext.resources.getStringArray(R.array.names_array)
             return names[Random().nextInt(names.size)]
         }
 

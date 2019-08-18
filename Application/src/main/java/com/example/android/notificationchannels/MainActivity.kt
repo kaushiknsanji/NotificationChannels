@@ -18,6 +18,7 @@ package com.example.android.notificationchannels
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -85,9 +86,11 @@ class MainActivity : Activity() {
 
     /** Send Intent to load system Notification Settings for this app.  */
     private fun goToNotificationSettings() {
-        val i = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-        i.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-        startActivity(i)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationSettingsIntent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            notificationSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            startActivity(notificationSettingsIntent)
+        }
     }
 
     /**
