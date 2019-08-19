@@ -75,6 +75,7 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
         followersChannel.lightColor = Color.GREEN
         followersChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
         followersChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 500, 200, 500)
+        followersChannel.setShowBadge(false)
 
         // Submit the notification channel object to the notification manager
         mNotificationManager.createNotificationChannel(followersChannel)
@@ -95,6 +96,7 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
         dmChannel.lightColor = Color.BLUE
         dmChannel.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
         dmChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 500, 200, 500)
+        dmChannel.setShowBadge(true)
 
         // Submit the notification channel object to the notification manager
         mNotificationManager.createNotificationChannel(dmChannel)
