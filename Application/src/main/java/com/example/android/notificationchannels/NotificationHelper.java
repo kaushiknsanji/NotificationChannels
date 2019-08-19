@@ -106,7 +106,7 @@ class NotificationHelper extends ContextWrapper {
     /**
      * Get a follow/un-follow notification
      *
-     * <p>Provide the builder rather than the notification it's self as useful for making
+     * <p>Provide the builder rather than the notification itself, since it is useful for making
      * notification changes.
      *
      * @param title the title of the notification
@@ -135,7 +135,7 @@ class NotificationHelper extends ContextWrapper {
     /**
      * Get a direct message notification
      *
-     * <p>Provide the builder rather than the notification it's self as useful for making
+     * <p>Provide the builder rather than the notification itself, since it is useful for making
      * notification changes.
      *
      * @param title Title for notification.
@@ -178,7 +178,7 @@ class NotificationHelper extends ContextWrapper {
         stackBuilder.addParentStack(MainActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(openMainIntent);
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
