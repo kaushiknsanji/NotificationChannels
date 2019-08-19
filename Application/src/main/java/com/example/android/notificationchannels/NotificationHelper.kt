@@ -16,6 +16,7 @@
 
 package com.example.android.notificationchannels
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -102,44 +103,56 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
     /**
      * Get a follow/un-follow notification
      *
-     * Provide the builder rather than the notification it's self as useful for making
+     * Provide the builder rather than the notification itself, since it is useful for making
      * notification changes.
 
      * @param title the title of the notification
-     * *
      * @param body  the body text for the notification
-     * *
      * @return A Notification.Builder configured with the selected channel and details
      */
-    fun getNotificationFollower(title: String, body: String): NotificationCompat.Builder {
-        return NotificationCompat.Builder(applicationContext)
+    @SuppressLint("ObsoleteSdkInt")
+    fun getNotificationFollower(title: String, body: String): NotificationCompat.Builder =
+            NotificationCompat.Builder(applicationContext, FOLLOWERS_CHANNEL)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(smallIcon)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-    }
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                                Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                            // Sets the Notification Priority which is the equivalent of Notification Importance
+                            // for devices running on Android version less than Oreo
+                            priority = NotificationCompat.PRIORITY_DEFAULT
+                        }
+                    }
 
     /**
      * Get a direct message notification
      *
-     * Provide the builder rather than the notification it's self as useful for making
+     * Provide the builder rather than the notification itself, since it is useful for making
      * notification changes.
 
      * @param title Title for notification.
-     * *
      * @param body  Message for notification.
-     * *
      * @return A Notification.Builder configured with the selected channel and details
      */
-    fun getNotificationDM(title: String, body: String): NotificationCompat.Builder {
-        return NotificationCompat.Builder(applicationContext)
+    @SuppressLint("ObsoleteSdkInt")
+    fun getNotificationDM(title: String, body: String): NotificationCompat.Builder =
+            NotificationCompat.Builder(applicationContext, DIRECT_MESSAGE_CHANNEL)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setSmallIcon(smallIcon)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-    }
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                                Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                            // Sets the Notification Priority which is the equivalent of Notification Importance
+                            // for devices running on Android version less than Oreo
+                            priority = NotificationCompat.PRIORITY_HIGH
+                        }
+                    }
 
     /**
      * Create a PendingIntent for opening up the MainActivity when the notification is pressed
@@ -190,6 +203,5 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
             val names = applicationContext.resources.getStringArray(R.array.names_array)
             return names[Random().nextInt(names.size)]
         }
-
 
 }
