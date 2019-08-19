@@ -201,9 +201,8 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
      * @return A random name
      */
     val randomName: String
-        get() {
-            val names = applicationContext.resources.getStringArray(R.array.names_array)
-            return names[Random().nextInt(names.size)]
+        get() = applicationContext.resources.getStringArray(R.array.names_array).run {
+            this[Random().nextInt(this.size)]
         }
 
 }

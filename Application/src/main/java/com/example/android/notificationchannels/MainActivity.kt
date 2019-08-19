@@ -41,10 +41,10 @@ class MainActivity : Activity() {
     companion object {
         private val TAG = MainActivity::class.java.simpleName
 
-        private val NOTIFICATION_FOLLOW = 1100
-        private val NOTIFICATION_UNFOLLOW = 1101
-        private val NOTIFICATION_DM_FRIEND = 1200
-        private val NOTIFICATION_DM_COWORKER = 1201
+        private const val NOTIFICATION_FOLLOW = 1100
+        private const val NOTIFICATION_UNFOLLOW = 1101
+        private const val NOTIFICATION_DM_FRIEND = 1200
+        private const val NOTIFICATION_DM_COWORKER = 1201
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +97,7 @@ class MainActivity : Activity() {
 
     /**
      * Send intent to load system Notification Settings UI for a particular channel.
-
+     *
      * @param channelId Unique Channel Id of the Notification Channel to display
      */
     private fun goToNotificationChannelSettings(channelId: String) {
