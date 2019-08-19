@@ -116,10 +116,10 @@ public class MainActivity extends Activity {
      */
     private void goToNotificationChannelSettings(String channelId) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Intent notificationSettingsIntent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-            notificationSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-            notificationSettingsIntent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
-            startActivity(notificationSettingsIntent);
+            Intent notificationChannelSettingsIntent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+            notificationChannelSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            notificationChannelSettingsIntent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
+            startActivity(notificationChannelSettingsIntent);
         }
     }
 
