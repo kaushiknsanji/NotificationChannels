@@ -84,7 +84,9 @@ class MainActivity : Activity() {
 
     }
 
-    /** Send Intent to load system Notification Settings for this app.  */
+    /**
+     * Send Intent to load system Notification Settings for this app.
+     */
     private fun goToNotificationSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationSettingsIntent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
@@ -96,10 +98,15 @@ class MainActivity : Activity() {
     /**
      * Send intent to load system Notification Settings UI for a particular channel.
 
-     * @param channel Name of channel to configure
+     * @param channelId Unique Channel Id of the Notification Channel to display
      */
-    private fun goToNotificationChannelSettings(channel: String) {
-        // Skeleton method to be completed later
+    private fun goToNotificationChannelSettings(channelId: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannelSettingsIntent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+            notificationChannelSettingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            notificationChannelSettingsIntent.putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+            startActivity(notificationChannelSettingsIntent)
+        }
     }
 
     /**
@@ -122,10 +129,10 @@ class MainActivity : Activity() {
             when (view.id) {
                 R.id.follow_button -> sendNotification(NOTIFICATION_FOLLOW)
                 R.id.un_follow_button -> sendNotification(NOTIFICATION_UNFOLLOW)
-                R.id.follower_channel_settings_button -> goToNotificationChannelSettings("")
+                R.id.follower_channel_settings_button -> goToNotificationChannelSettings(NotificationHelper.FOLLOWERS_CHANNEL)
                 R.id.friend_dm_button -> sendNotification(NOTIFICATION_DM_FRIEND)
                 R.id.coworker_dm_button -> sendNotification(NOTIFICATION_DM_COWORKER)
-                R.id.dm_channel_settings_button -> goToNotificationChannelSettings("")
+                R.id.dm_channel_settings_button -> goToNotificationChannelSettings(NotificationHelper.DIRECT_MESSAGE_CHANNEL)
                 R.id.go_to_settings_button -> goToNotificationSettings()
                 else -> Log.e(TAG, getString(R.string.error_click))
             }
