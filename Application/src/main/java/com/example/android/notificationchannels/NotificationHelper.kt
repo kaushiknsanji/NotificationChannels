@@ -173,7 +173,7 @@ internal class NotificationHelper(context: Context) : ContextWrapper(context) {
             val stackBuilder = TaskStackBuilder.create(this)
             stackBuilder.addParentStack(MainActivity::class.java)
             stackBuilder.addNextIntent(openMainIntent)
-            return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT)
+            return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
     /**
